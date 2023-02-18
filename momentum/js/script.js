@@ -8,24 +8,31 @@ const name = document.querySelector('.name');
 
 const slidePrev = document.querySelector('.slide-prev');
 const slideNext = document.querySelector('.slide-next');
-let randomNum = getRandomNum();
+let randomNum = getRandomNum(1, 20);
 let timesOfDay = "";
 
 const weatherIcon = document.querySelector('.weather-icon');
+const weatherError = document.querySelector('.weather-error');
 const temperature = document.querySelector('.temperature');
 const weatherDescription = document.querySelector('.weather-description');
-const windSpeed = document.querySelector('.wind-speed');
+const windSpeed = document.querySelector('.wind');
 const humidity = document.querySelector('.humidity');
 const city = document.querySelector('.city');
 
+const changeQuote = document.querySelector('.change-quote');
+const quote = document.querySelector('.quote');
+const author = document.querySelector('.author');
 
-function getRandomNum() {
-    return Math.floor(Math.random() * (20 - 1 + 1) + 1)
+
+function getRandomNum(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
 
 // SHOW TIME
 showTime();
 getSlideNext()
+getQuotes()
 
 function showTime() {
     const date = new Date();
@@ -35,6 +42,7 @@ function showTime() {
     showGreeting();
 }
 
+
 // SHOW DATE
 function showDate() {
     const date = new Date();
@@ -42,22 +50,28 @@ function showDate() {
     data.textContent = date.toLocaleDateString('en-EN', options); // 'ru-RU', 'be-BE'
 }
 
+
 // SHOW GREETING
 function showGreeting() {
-    const greetingText = ['morning', 'afternoon', 'evening', 'night']
+    const greetingTextEng = [['Good', 'Good', 'Good'], ['morning', 'afternoon', 'evening', ' night']];
+    const greetingTextRus = [['Доброе', 'Добрый', 'Доброй'], ['утро', 'день', 'вечер', ' ночи']];
+    const greetingTextBel = [['Добрай', 'Добры', 'Дабра'], ['раніцы', 'дзень', 'вечар', 'нач']];
+
+    let greetingText = language === 'en' ? greetingTextEng : language === 'ru' ? greetingTextRus : language === 'be' ? greetingTextBel : null;
+
     const timeOfDay = getTimeOfDay();
     if (timeOfDay >= 6 && timeOfDay < 12) {
-        greeting.textContent = `Good ${greetingText[0]}`;
-        timesOfDay = greetingText[0]
+        greeting.textContent = `${greetingText[0][0]} ${greetingText[1][0]}`;
+        timesOfDay = greetingTextEng[1][0]
     } else if (timeOfDay >= 12 && timeOfDay < 18) {
-        greeting.textContent = `Good ${greetingText[1]}`;
-        timesOfDay = greetingText[1]
+        greeting.textContent = `${greetingText[0][1]} ${greetingText[1][1]}`;
+        timesOfDay = greetingTextEng[1][1]
     } else if (timeOfDay >= 18 && timeOfDay < 23) {
-        greeting.textContent = `Good ${greetingText[2]}`;
-        timesOfDay = greetingText[2]
+        greeting.textContent = `${greetingText[0][1]} ${greetingText[1][2]}`;
+        timesOfDay = greetingTextEng[1][2]
     } else if (timeOfDay >= 0 && timeOfDay < 6) {
-        greeting.textContent = `Good ${greetingText[3]}`;
-        timesOfDay = greetingText[3]
+        greeting.textContent = `${greetingText[0][2]} ${greetingText[1][3]}`;
+        timesOfDay = greetingTextEng[1][3]
     }
 }
 
@@ -65,6 +79,7 @@ function getTimeOfDay() {
     const date = new Date();
     return date.getHours();
 }
+
 
 // SAVE AND READ LOCAL STORAGE
 function setLocalStorage() { // Save name, city to LocalStorage
@@ -77,6 +92,7 @@ function getLocalStorage() { // Load name, city to LocalStorage
 }
 window.addEventListener('load', getLocalStorage)
 
+
 // SET BACKGROUND IMAGE
 function setBg(timesOfDay, bgNum) {
     const img = new Image();
@@ -86,12 +102,12 @@ function setBg(timesOfDay, bgNum) {
     img.onload = () => {
         body.style.backgroundImage = `url(${img.src})`;
     }
-
     // вместо этого кода
     // img.addEventListener('load', () {
     //     body.style.backgroundImage = ...
     // })
 }
+
 
 // SLIDER
 function getSlidePrev() {
@@ -110,8 +126,8 @@ function getSlideNext() {
 slidePrev.addEventListener('click', getSlidePrev)
 slideNext.addEventListener('click', getSlideNext)
 
-// SHOW WEATHER
 
+// SHOW WEATHER
 // https://api.openweathermap.org/data/2.5/weather?q=Минск&lang=ru&appid=ba33b9986c51c571df0fa31815ded896&units=metric
 // // Минск - название города, можно указывать на русском или на английском языке
 // // ba33b9986c51c571df0fa31815ded896 - API key полученный при регистрации
@@ -133,10 +149,11 @@ async function getWeather() {
     } else {
         weatherIcon.className = '';
         weatherIcon.classList.remove();
-        weatherDescription.textContent = 'City not found';
+        weatherDescription.textContent = '';
         temperature.textContent = '';
         windSpeed.textContent = '';
         humidity.textContent = '';
+        weatherError.textContent = 'City not found';
     }
 }
 
@@ -150,6 +167,19 @@ function setCity(event) {
 
 document.addEventListener('DOMContentLoaded', getWeather);
 city.addEventListener('keypress', setCity);
+city.addEventListener('keypress', setCity);
 
 
+
+// SHOW QUOTES
+async function getQuotes() {
+    const quotes = '../data.json';
+    const res = await fetch(quotes);
+    const data = await res.json();
+    let quoteNum = getRandomNum(0, data.length - 1);
+    quote.textContent = data[quoteNum]['text'];
+    author.textContent = data[quoteNum]['author'];
+}
+
+changeQuote.addEventListener('click', getQuotes);
 
