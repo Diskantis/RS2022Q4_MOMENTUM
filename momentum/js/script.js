@@ -1,3 +1,5 @@
+import playList from './playList.js';
+
 const language = document.getElementsByTagName("html")[0].getAttribute("lang");
 const body = document.querySelector('body');
 
@@ -139,13 +141,26 @@ async function getWeather() {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=${language}&appid=ba33b9986c51c571df0fa31815ded896&units=metric`;
     const res = await fetch(url);
     const data = await res.json();
+    const weatherTextWind = [['Wind speed', 'Скорость ветра', 'Хуткасць ветру'], ['m/s','м/с','м/с']];
+    const weatherTextHumidity = ['Humidity', 'Влажность', 'Вільготнасць']
+    const weatherTextError = ['City not found', 'Город не найден', 'Горад не знойдзены']
+
     if (data['message'] !== 'city not found'){
+        weatherError.textContent = '';
         weatherIcon.className = 'weather-icon owf';
         weatherIcon.classList.add(`owf-${data['weather'][0].id}`);
         weatherDescription.textContent = data['weather'][0].description;
         temperature.textContent = `${Math.floor(data['main']['temp'])}°C`;
-        windSpeed.textContent = `Wind speed: ${Math.floor(data['wind']['speed'])} m/s`;
-        humidity.textContent = `Humidity: ${data['main']['humidity']} %`;
+        if (language === 'en'){
+            windSpeed.textContent = `${weatherTextWind[0][0]}: ${Math.floor(data['wind']['speed'])} ${weatherTextWind[1][0]}`;
+            humidity.textContent = `${weatherTextHumidity[0]}: ${data['main']['humidity']} %`;
+        } else if (language === 'ru') {
+            windSpeed.textContent = `${weatherTextWind[0][1]}: ${Math.floor(data['wind']['speed'])} ${weatherTextWind[1][1]}`;
+            humidity.textContent = `${weatherTextHumidity[1]}: ${data['main']['humidity']} %`;
+        } else if (language === 'be') {
+            windSpeed.textContent = `${weatherTextWind[0][2]}: ${Math.floor(data['wind']['speed'])} ${weatherTextWind[1][2]}`;
+            humidity.textContent = `${weatherTextHumidity[2]}: ${data['main']['humidity']} %`;
+        }
     } else {
         weatherIcon.className = '';
         weatherIcon.classList.remove();
@@ -153,7 +168,13 @@ async function getWeather() {
         temperature.textContent = '';
         windSpeed.textContent = '';
         humidity.textContent = '';
-        weatherError.textContent = 'City not found';
+        if (language === 'en'){
+            weatherError.textContent = weatherTextError[0];
+        } else if (language === 'ru') {
+            weatherError.textContent = weatherTextError[1];
+        } else if (language === 'be') {
+            weatherError.textContent = weatherTextError[2];
+        }
     }
 }
 
@@ -183,3 +204,66 @@ async function getQuotes() {
 
 changeQuote.addEventListener('click', getQuotes);
 
+
+// SET PLAYER
+let audio = document.querySelector("audio");
+let buttonPlay = document.querySelector(".play");
+let buttonPrev = document.querySelector(".play-prev");
+let buttonNext = document.querySelector(".play-next");
+let playUl = document.querySelector(".play-list");
+let playItem = document.querySelectorAll('.play-item');
+
+
+playList.forEach(el => {
+    const li = document.createElement('li');
+    li.classList.add('play-item');
+    li.textContent = el['title']
+    playUl.append(li)
+})
+
+
+let isPlaying = false;
+let songIndex = 0;
+
+function playAndPause() {
+    if (!isPlaying){
+        audio.src = playList[songIndex]["src"];
+        playUl.children[songIndex].classList.add('item-active')
+        audio.play();
+        isPlaying = true;
+    } else {
+        audio.pause();
+        isPlaying = false;
+    }
+}
+
+audio.addEventListener('ended', function(){
+    nextSong();
+});
+
+function nextSong() {
+    songIndex++;
+    songIndex > playList.length - 1 ? songIndex = 0 : null;
+    audio.src = playList[songIndex]["src"];
+    playUl.children[songIndex - 1].classList.remove('item-active')
+    isPlaying = false;
+    playAndPause();
+}
+
+function previousSong() {
+    songIndex--;
+    songIndex < 0 ? songIndex = playList.length - 1 : null;
+    audio.src = playList[songIndex]["src"];
+    playUl.children[songIndex + 1].classList.remove('item-active')
+    isPlaying = false;
+    playAndPause();
+}
+
+function toggleBtn() {
+    buttonPlay.classList.toggle('pause');
+    playAndPause()
+}
+
+buttonPlay.addEventListener('click', toggleBtn);
+buttonNext.addEventListener('click', nextSong);
+buttonPrev.addEventListener('click', previousSong);
