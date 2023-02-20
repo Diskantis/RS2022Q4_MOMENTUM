@@ -30,7 +30,6 @@ function getRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-
 // SHOW TIME
 showTime();
 getSlideNext()
@@ -48,18 +47,43 @@ function showTime() {
 // SHOW DATE
 function showDate() {
     const date = new Date();
-    const options = {weekday: 'long', day: 'numeric', month: 'long'};
-    data.textContent = date.toLocaleDateString('en-EN', options); // 'ru-RU', 'be-BE'
+    let dayWeek = date.getDay();
+    let dayNum = date.getDate();
+    let month = date.getMonth();
+    const monthRus = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+    const monthBel = ["студзеня", "лютага", "сакавiка", "красавiка", "мая", "червеня", "лiпеня", "жнiвеня", "верасеня", "кастрычнiка", "лiстапада", "снежаня"];
+    const weekdayRus = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+    const weekdayBel = ["Нядзеля", "Панядзелак", "Аўторак", "Серада", "Чацвер", "Пятніца", "Субота",];
+
+    // "Воскресенье, 16 мая" / "Sunday, May 16" / "Нядзеля, 16 траўня"
+    if (language === 'en') {
+        const options = {weekday: 'long', day: 'numeric', month: 'long'};
+        data.textContent = date.toLocaleDateString('en-EN', options) // 'ru-RU', 'be-BE'
+    } else if (language === 'ru') {
+        data.textContent = `${weekdayRus[dayWeek]}, ${dayNum} ${monthRus[month]}`
+    } else if (language === 'be') {
+        data.textContent = `${weekdayBel[dayWeek]}, ${dayNum} ${monthBel[month]}`
+    }
 }
 
 
 // SHOW GREETING
 function showGreeting() {
-    const greetingTextEng = [['Good', 'Good', 'Good'], ['morning', 'afternoon', 'evening', ' night']];
-    const greetingTextRus = [['Доброе', 'Добрый', 'Доброй'], ['утро', 'день', 'вечер', ' ночи']];
-    const greetingTextBel = [['Добрай', 'Добры', 'Дабра'], ['раніцы', 'дзень', 'вечар', 'нач']];
+    const greetingTextEng = [['Good', 'Good', 'Good'], ['morning', 'afternoon', 'evening', ' night'], ['[Enter name]']];
+    const greetingTextRus = [['Доброе', 'Добрый', 'Доброй'], ['утро', 'день', 'вечер', ' ночи'], ["[Введите имя]"]];
+    const greetingTextBel = [['Добрай', 'Добры', 'Дабра'], ['раніцы', 'дзень', 'вечар', 'нач'], ["[Увядзіце імя]"]];
 
-    let greetingText = language === 'en' ? greetingTextEng : language === 'ru' ? greetingTextRus : language === 'be' ? greetingTextBel : null;
+    let greetingText = '';
+    if (language === 'en') {
+        greetingText = greetingTextEng;
+        localStorage.getItem('name') ? name.value = localStorage.getItem('name') : name.placeholder = greetingTextEng[2][0];
+    } else if (language === 'ru') {
+        greetingText = greetingTextRus;
+        localStorage.getItem('name') ? name.value = localStorage.getItem('name') : name.placeholder = greetingTextRus[2][0]
+    } else if (language === 'be') {
+        greetingText = greetingTextBel;
+        localStorage.getItem('name') ? name.value = localStorage.getItem('name') : name.placeholder = greetingTextBel[2][0]
+    }
 
     const timeOfDay = getTimeOfDay();
     if (timeOfDay >= 6 && timeOfDay < 12) {
@@ -98,7 +122,7 @@ window.addEventListener('load', getLocalStorage)
 // SET BACKGROUND IMAGE
 function setBg(timesOfDay, bgNum) {
     const img = new Image();
-    img.src = `https://raw.githubusercontent.com/Diskantis/momentum-stage1-tasks/assets/images/${timesOfDay}/${bgNum}.jpg`
+    img.src = `https://raw.githubusercontent.com/Diskantis/momentum-stage1-tasks/assets/images/${timesOfDay}/${bgNum}.webp`
 
     // новый упрощенный вариант
     img.onload = () => {
@@ -149,7 +173,8 @@ async function getWeather() {
         weatherError.textContent = '';
         weatherIcon.className = 'weather-icon owf';
         weatherIcon.classList.add(`owf-${data['weather'][0].id}`);
-        weatherDescription.textContent = data['weather'][0].description;
+        let str = typeof data['weather'][0].description === 'string' ? data['weather'][0].description : null;
+        weatherDescription.textContent = str[0].toUpperCase() + str.slice(1);
         temperature.textContent = `${Math.floor(data['main']['temp'])}°C`;
         if (language === 'en'){
             windSpeed.textContent = `${weatherTextWind[0][0]}: ${Math.floor(data['wind']['speed'])} ${weatherTextWind[1][0]}`;
@@ -211,8 +236,6 @@ let buttonPlay = document.querySelector(".play");
 let buttonPrev = document.querySelector(".play-prev");
 let buttonNext = document.querySelector(".play-next");
 let playUl = document.querySelector(".play-list");
-let playItem = document.querySelectorAll('.play-item');
-
 
 playList.forEach(el => {
     const li = document.createElement('li');
@@ -221,6 +244,7 @@ playList.forEach(el => {
     playUl.append(li)
 })
 
+let playItem = document.querySelectorAll('.play-item');
 
 let isPlaying = false;
 let songIndex = 0;
@@ -228,7 +252,9 @@ let songIndex = 0;
 function playAndPause() {
     if (!isPlaying){
         audio.src = playList[songIndex]["src"];
+        playItem.forEach(el => el.classList.remove('item-active'))
         playUl.children[songIndex].classList.add('item-active')
+        audio.currentTime = 0;
         audio.play();
         isPlaying = true;
     } else {
@@ -245,7 +271,6 @@ function nextSong() {
     songIndex++;
     songIndex > playList.length - 1 ? songIndex = 0 : null;
     audio.src = playList[songIndex]["src"];
-    playUl.children[songIndex - 1].classList.remove('item-active')
     isPlaying = false;
     playAndPause();
 }
@@ -254,7 +279,6 @@ function previousSong() {
     songIndex--;
     songIndex < 0 ? songIndex = playList.length - 1 : null;
     audio.src = playList[songIndex]["src"];
-    playUl.children[songIndex + 1].classList.remove('item-active')
     isPlaying = false;
     playAndPause();
 }
@@ -267,3 +291,6 @@ function toggleBtn() {
 buttonPlay.addEventListener('click', toggleBtn);
 buttonNext.addEventListener('click', nextSong);
 buttonPrev.addEventListener('click', previousSong);
+
+
+

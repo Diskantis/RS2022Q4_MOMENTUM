@@ -15,11 +15,6 @@ const playList = [
         duration: '04:44'
     },
     {
-        title: 'V of BTS - Winter Bear',
-        src: 'momentum/assets/sounds/V of BTS - Winter Bear.mp3',
-        duration: '03:31'
-    },
-    {
         title: 'ACDC - Highway to Hell',
         src: 'momentum/assets/sounds/ACDC - Highway to Hell.mp3',
         duration: '03:28'
