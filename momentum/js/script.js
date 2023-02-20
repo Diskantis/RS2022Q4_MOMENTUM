@@ -219,7 +219,7 @@ city.addEventListener('keypress', setCity);
 
 // SHOW QUOTES
 async function getQuotes() {
-    const quotes = '../data.json';
+    const quotes = './data.json';
     const res = await fetch(quotes);
     const data = await res.json();
     let quoteNum = getRandomNum(0, data.length - 1);
