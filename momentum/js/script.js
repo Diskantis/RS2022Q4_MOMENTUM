@@ -161,7 +161,8 @@ slideNext.addEventListener('click', getSlideNext)
 // // units=metric - температура в градусах Цельсия (можно указать units=imperial для отображения температуры в градусах Фаренгейта)
 
 async function getWeather() {
-    localStorage.getItem('city') ? city.value = localStorage.getItem('city') : city.value = 'Minsk';
+    let defaultCity = language === 'en' ? 'Minsk' : language === 'ru' ? 'Минск' : language === 'be' ? 'Минск' : ''
+    localStorage.getItem('city') ? city.value = localStorage.getItem('city') : city.value = defaultCity;
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=${language}&appid=ba33b9986c51c571df0fa31815ded896&units=metric`;
     const res = await fetch(url);
     const data = await res.json();
@@ -231,7 +232,7 @@ changeQuote.addEventListener('click', getQuotes);
 
 
 // SET PLAYER
-let audio = document.querySelector("audio");
+let title = document.querySelector(".title");
 let buttonPlay = document.querySelector(".play");
 let buttonPrev = document.querySelector(".play-prev");
 let buttonNext = document.querySelector(".play-next");
@@ -248,10 +249,14 @@ let playItem = document.querySelectorAll('.play-item');
 
 let isPlaying = false;
 let songIndex = 0;
+let audio = new Audio();
+title.textContent = '';
 
-function playAndPause() {
+    function playAndPause() {
     if (!isPlaying){
         audio.src = playList[songIndex]["src"];
+        title.textContent = playList[songIndex]["title"];
+        console.log(title.src)
         playItem.forEach(el => el.classList.remove('item-active'))
         playUl.children[songIndex].classList.add('item-active')
         audio.currentTime = 0;
