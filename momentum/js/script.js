@@ -232,11 +232,19 @@ changeQuote.addEventListener('click', getQuotes);
 
 
 // SET PLAYER
-let title = document.querySelector(".title");
-let buttonPlay = document.querySelector(".play");
-let buttonPrev = document.querySelector(".play-prev");
-let buttonNext = document.querySelector(".play-next");
-let playUl = document.querySelector(".play-list");
+const title = document.querySelector(".title");
+const buttonPlay = document.querySelector(".play");
+const buttonPrev = document.querySelector(".play-prev");
+const buttonNext = document.querySelector(".play-next");
+const progressBar = document.querySelector('.progress-bar');
+const playUl = document.querySelector(".play-list");
+
+let isPlaying = false;
+let songIndex = 0;
+let audio = new Audio();
+title.textContent = '';
+let currentTime = 0;
+audio.volume = 0.75;
 
 playList.forEach(el => {
     const li = document.createElement('li');
@@ -246,24 +254,25 @@ playList.forEach(el => {
 })
 
 let playItem = document.querySelectorAll('.play-item');
+playItem.forEach((audio, index) => audio.addEventListener('click', () => {
+    songIndex = index;
+    currentTime = 0;
+    toggleBtn()
+}));
 
-let isPlaying = false;
-let songIndex = 0;
-let audio = new Audio();
-title.textContent = '';
-
-    function playAndPause() {
+function playAndPause() {
     if (!isPlaying){
         audio.src = playList[songIndex]["src"];
         title.textContent = playList[songIndex]["title"];
-        console.log(title.src)
         playItem.forEach(el => el.classList.remove('item-active'))
         playUl.children[songIndex].classList.add('item-active')
-        audio.currentTime = 0;
+        audio.currentTime = currentTime;
         audio.play();
         isPlaying = true;
     } else {
         audio.pause();
+        buttonPlay.classList.remove('pause');
+        currentTime = audio.currentTime;
         isPlaying = false;
     }
 }
@@ -277,7 +286,8 @@ function nextSong() {
     songIndex > playList.length - 1 ? songIndex = 0 : null;
     audio.src = playList[songIndex]["src"];
     isPlaying = false;
-    playAndPause();
+    currentTime = 0;
+    toggleBtn();
 }
 
 function previousSong() {
@@ -285,7 +295,8 @@ function previousSong() {
     songIndex < 0 ? songIndex = playList.length - 1 : null;
     audio.src = playList[songIndex]["src"];
     isPlaying = false;
-    playAndPause();
+    currentTime = 0;
+    toggleBtn();
 }
 
 function toggleBtn() {
@@ -297,5 +308,46 @@ buttonPlay.addEventListener('click', toggleBtn);
 buttonNext.addEventListener('click', nextSong);
 buttonPrev.addEventListener('click', previousSong);
 
+function updateProgressValue() {
+    progressBar.max = audio.duration;
+    progressBar.value = audio.currentTime;
+    document.querySelector('.current-time').innerHTML = (formatTime(Math.floor(audio.currentTime)));
+    if (formatTime(Math.floor(audio.duration)) !== "NaN:NaN") {
+        document.querySelector('.duration-time').innerHTML = (formatTime(Math.floor(audio.duration)));
+    } else {
+        document.querySelector('.duration-time').innerHTML = "0:00";
+    }
+}
 
+function formatTime(seconds) {
+    let min = Math.floor((seconds / 60));
+    let sec = Math.floor(seconds - (min * 60));
+    if (sec < 10){
+        sec  = `0${sec}`;
+    }
+    return `${min}:${sec}`;
+}
+
+setInterval(updateProgressValue, 500);
+
+function changeProgressBar() {
+    audio.currentTime = progressBar.value;
+    currentTime = audio.currentTime
+}
+
+progressBar.addEventListener('change', changeProgressBar);
+
+const volume = document.querySelector(".volume-button");
+volume.addEventListener('click', () => {
+    audio.muted = !audio.muted;
+    audio.muted ? volume.classList.add("mute") : volume.classList.remove("mute");
+});
+
+// const volumeSlider = audioPlayer.querySelector(".controls .volume-slider");
+// volumeSlider.addEventListener('click', e => {
+//     const sliderWidth = window.getComputedStyle(volumeSlider).width;
+//     const newVolume = e.offsetX / parseInt(sliderWidth);
+//     audio.volume = newVolume;
+//     audioPlayer.querySelector(".controls .volume-percentage").style.width = newVolume * 100 + '%';
+// }, false)
 

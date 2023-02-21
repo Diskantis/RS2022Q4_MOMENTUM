@@ -13,9 +13,24 @@
     <div class="player">
       <div class="title"></div>
       <div class="player-controls">
-        <button class="play-prev player-icon"></button>
-        <button class="play player-icon"></button>
-        <button class="play-next player-icon"></button>
+        <div class="player-buttons">
+          <button class="play-prev player-icon"></button>
+          <button class="play player-icon"></button>
+          <button class="play-next player-icon"></button>
+        </div>
+        <div class="progress-bar__content">
+          <input type="range" class="progress-bar" min="0" max="233.717551" value="0">
+          <span class="current-time"></span>
+          <span class="duration-time"></span>
+        </div>
+        <div class="volume-container">
+          <div class="volume-button">
+            <div class="volume volume-icon"></div>
+          </div>
+          <div class="volume-slider">
+            <div class="volume-percentage"></div>
+          </div>
+        </div>
       </div>
       <ul class="play-list"></ul>
     </div>
