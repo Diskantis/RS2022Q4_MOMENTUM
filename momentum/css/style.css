@@ -40,6 +40,7 @@ body {
   color: #C1FF06;
   text-shadow: 1px 1px 0 0 #fff
 }
+
 .player {
   margin-right: 10px;
 }
@@ -217,7 +218,8 @@ body {
 
 .player-icon,
 .slider-icon,
-.change-quote {
+.change-quote,
+.settings-icon {
   width: 32px;
   height: 32px;
   background-size: 32px 32px;
@@ -233,13 +235,15 @@ body {
 
 .player-icon:hover,
 .slider-icon:hover,
-.change-quote:hover {
+.change-quote:hover,
+.settings-icon:hover {
   opacity: 1;
 }
 
 .player-icon:active,
 .slider-icon:active,
-.change-quote:active {
+.change-quote:active,
+.settings-icon:active {
   border: 0;
   outline: 0;  
   transform: scale(1.1);
@@ -431,3 +435,33 @@ body {
     padding: 5px;
   }
 }
+
+.settings-icon {
+  position: absolute;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  background-size: 40px 40px;
+  background-image: url("../assets/svg/cogwheel.svg");
+}
+
+.settings-icon:hover {
+  transform: rotate(60deg);
+}
+
+.win-settings.active {
+  position: absolute;
+  display: flex;
+  width: 200px;
+  height: 40px;
+  border: 1px solid white;
+  border-radius: 5px;
+  background-color: #717171;
+  left: 20px;
+  bottom: 70px;
+
+}
+.win-settings{
+  display: none;
+}
+

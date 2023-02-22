@@ -364,3 +364,9 @@ volume.addEventListener('click', () => {
 });
 
 
+// SETTINGS
+const settings = document.querySelector(".settings-icon");
+const windowSet = document.querySelector(".win-settings");
+settings.addEventListener('click', () => {
+    windowSet.classList.toggle('active');
+})
