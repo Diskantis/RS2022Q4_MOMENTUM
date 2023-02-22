@@ -224,8 +224,12 @@ async function getQuotes() {
     const res = await fetch(quotes);
     const data = await res.json();
     let quoteNum = getRandomNum(0, data.length - 1);
-    quote.textContent = data[quoteNum]['text'];
-    author.textContent = data[quoteNum]['author'];
+    if (data[quoteNum]['lang'] === language) {
+        quote.textContent = data[quoteNum]['text'];
+        author.textContent = data[quoteNum]['author'];
+    } else {
+        await getQuotes()
+    }
 }
 
 changeQuote.addEventListener('click', getQuotes);
@@ -244,7 +248,6 @@ let songIndex = 0;
 let audio = new Audio();
 title.textContent = '';
 let currentTime = 0;
-audio.volume = 0.75;
 
 playList.forEach(el => {
     const li = document.createElement('li');
@@ -301,6 +304,8 @@ function previousSong() {
 
 function toggleBtn() {
     buttonPlay.classList.toggle('pause');
+    document.querySelector('.current-time').classList.remove('active')
+    document.querySelector('.duration-time').classList.remove('active')
     playAndPause()
 }
 
@@ -334,20 +339,28 @@ function changeProgressBar() {
     audio.currentTime = progressBar.value;
     currentTime = audio.currentTime
 }
-
 progressBar.addEventListener('change', changeProgressBar);
+
+audio.volume = 0.75;
+
+const volumeSlider = document.querySelector(".volume-slider");
+volumeSlider.addEventListener('click', e => {
+    const sliderWidth = window.getComputedStyle(volumeSlider).width;
+    const newVolume = e.offsetX / parseInt(sliderWidth);
+    audio.volume = newVolume;
+    document.querySelector(".volume-percentage").style.width = newVolume * 100 + '%';
+}, false)
 
 const volume = document.querySelector(".volume-button");
 volume.addEventListener('click', () => {
     audio.muted = !audio.muted;
-    audio.muted ? volume.classList.add("mute") : volume.classList.remove("mute");
+    if (audio.muted) {
+        volume.classList.add("mute")
+        document.querySelector(".volume-percentage").style.width = 1 + '%';
+    } else if (!audio.muted) {
+        volume.classList.remove("mute");
+        document.querySelector(".volume-percentage").style.width = audio.volume * 100 + '%';
+    }
 });
 
-// const volumeSlider = audioPlayer.querySelector(".controls .volume-slider");
-// volumeSlider.addEventListener('click', e => {
-//     const sliderWidth = window.getComputedStyle(volumeSlider).width;
-//     const newVolume = e.offsetX / parseInt(sliderWidth);
-//     audio.volume = newVolume;
-//     audioPlayer.querySelector(".controls .volume-percentage").style.width = newVolume * 100 + '%';
-// }, false)
 
