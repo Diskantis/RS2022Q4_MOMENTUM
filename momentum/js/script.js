@@ -1,6 +1,6 @@
 import playList from './playList.js';
 
-const language = document.getElementsByTagName("html")[0].getAttribute("lang");
+let language = localStorage.getItem('lang') ? localStorage.getItem('lang') : document.getElementsByTagName("html")[0].getAttribute("lang");
 const body = document.querySelector('body');
 
 const time = document.querySelector('.time');
@@ -30,6 +30,8 @@ function getRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
+// localStorage.clear()
+
 // SHOW TIME
 showTime();
 getSlideNext()
@@ -58,7 +60,7 @@ function showDate() {
     // "Воскресенье, 16 мая" / "Sunday, May 16" / "Нядзеля, 16 траўня"
     if (language === 'en') {
         const options = {weekday: 'long', day: 'numeric', month: 'long'};
-        data.textContent = date.toLocaleDateString('en-EN', options) // 'ru-RU', 'be-BE'
+        data.textContent = date.toLocaleDateString(language, options) // 'ru-RU', 'be-BE'
     } else if (language === 'ru') {
         data.textContent = `${weekdayRus[dayWeek]}, ${dayNum} ${monthRus[month]}`
     } else if (language === 'be') {
@@ -162,7 +164,7 @@ slideNext.addEventListener('click', getSlideNext)
 
 async function getWeather() {
     let defaultCity = language === 'en' ? 'Minsk' : language === 'ru' ? 'Минск' : language === 'be' ? 'Минск' : ''
-    localStorage.getItem('city') ? city.value = localStorage.getItem('city') : city.value = defaultCity;
+    city.value = localStorage.getItem('city') ? localStorage.getItem('city') : defaultCity;
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&lang=${language}&appid=ba33b9986c51c571df0fa31815ded896&units=metric`;
     const res = await fetch(url);
     const data = await res.json();
@@ -214,8 +216,6 @@ function setCity(event) {
 
 document.addEventListener('DOMContentLoaded', getWeather);
 city.addEventListener('keypress', setCity);
-city.addEventListener('keypress', setCity);
-
 
 
 // SHOW QUOTES
@@ -267,8 +267,9 @@ function playAndPause() {
     if (!isPlaying){
         audio.src = playList[songIndex]["src"];
         title.textContent = playList[songIndex]["title"];
-        playItem.forEach(el => el.classList.remove('item-active'))
-        playUl.children[songIndex].classList.add('item-active')
+        playItem.forEach(el => el.classList.remove('active'))
+        playItem.forEach(el => el.classList.contains('active'))
+        playUl.children[songIndex].classList.add('active')
         audio.currentTime = currentTime;
         audio.play();
         isPlaying = true;
@@ -304,8 +305,10 @@ function previousSong() {
 
 function toggleBtn() {
     buttonPlay.classList.toggle('pause');
+    playItem.forEach(el => el.classList.remove('active'))
     document.querySelector('.current-time').classList.remove('active')
     document.querySelector('.duration-time').classList.remove('active')
+    // document.querySelector('.play-item::before').classList.remove('active')
     playAndPause()
 }
 
@@ -367,6 +370,48 @@ volume.addEventListener('click', () => {
 // SETTINGS
 const settings = document.querySelector(".settings-icon");
 const windowSet = document.querySelector(".win-settings");
-settings.addEventListener('click', () => {
+
+function toggleSet(){
     windowSet.classList.toggle('active');
+}
+
+settings.addEventListener('click', e => {
+    e.stopPropagation();
+    toggleSet();
 })
+
+document.addEventListener('click', e => {
+    let target = e.target;
+    let its_win = target === windowSet || windowSet.contains(target);
+    let its_set = target === settings;
+    let set_is_active = windowSet.classList.contains('active');
+    if (!its_win && !its_set && set_is_active) {
+        toggleSet();
+    }
+})
+
+const appLanguage = ["Application Language:", "Язык приложения:", "Мова прыкладання:"]
+const appLang = document.querySelector(".language-title");
+
+function changeLangSet() {
+    appLang.textContent = language === 'en' ? appLanguage[0] : language === 'ru' ?  appLanguage[1] : language === 'be' ? appLanguage[2] : "";
+}
+changeLangSet()
+
+const langButtons = document.querySelectorAll(".lang-button");
+langButtons.forEach(button => button.textContent.toLowerCase() === language ? button.classList.add('active') : null)
+
+let langCount = 0;
+langButtons.forEach((button) => button.addEventListener('click', () => {
+    if (langCount <= 1 && !button.classList.contains('active')) {
+        langButtons.forEach(button => button.classList.remove('active'));
+        langCount = 0;
+        button.classList.add('active');
+        language = button.textContent.toLowerCase();
+        localStorage.setItem('lang', language);
+        langCount += 1;
+        getWeather()
+        getQuotes()
+        changeLangSet()
+    }
+}));

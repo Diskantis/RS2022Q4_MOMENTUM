@@ -192,8 +192,9 @@ body {
 }
 
 .play-item {
+  display: flex;
   position: relative;
-  padding: 5px 5px 5px 20px;
+  padding: 10px 10px 10px 33px;
   list-style: none;
   opacity: .8;
   cursor: pointer;
@@ -204,15 +205,26 @@ body {
   opacity: 1;
 }
 
-.play-item::before {
-  content: "\2713";  
+.play-item::before{
+  content: "";
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/svg/play.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 25px 25px;
   position: absolute;
   left: 0;
-  top: 2px;
+  top: 5px;
   font-weight: 900;
 }
 
-.item-active::before {
+.play-item.active::before {
+  content: "";
+  background-image: url("../assets/svg/pause.svg");
+}
+
+.play-item.active::before {
   color: #C5B358;
 }
 
@@ -449,19 +461,58 @@ body {
   transform: rotate(60deg);
 }
 
-.win-settings.active {
-  position: absolute;
+.win-settings{
+  width: 290px;
+  height: 7%;
+  position: fixed;
   display: flex;
-  width: 200px;
-  height: 40px;
+  border-radius: 5px;
+  background-color: rgba(0,0,0,.4);
+  left: 80px;
+  bottom: 20px;
+  z-index: 2;
+  opacity: 0;
+  transition: all .5s ease-in 0s;
+  transform: translateY(100%);
+  overflow-y: auto;
+}
+
+.win-settings.active {
+  opacity: 1;
+  transform: translateY(0%);
+}
+
+.set-language {
+  width: 280px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px;
+}
+.language-title {
+  width: 160px;
+  color: white;
+  text-align: left;
+}
+
+.lang-button {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  background-color: #717171;
   border: 1px solid white;
   border-radius: 5px;
-  background-color: #717171;
-  left: 20px;
-  bottom: 70px;
-
-}
-.win-settings{
-  display: none;
+  color: white;
+  font-weight: 700;
+  opacity: 0.8;
+  z-index: 5;
 }
 
+.lang-button:hover {
+  opacity: 1;
+}
+
+.lang-button.active {
+  opacity: 1;
+  transform: scale(1.1);
+}
