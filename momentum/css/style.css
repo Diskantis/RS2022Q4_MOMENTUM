@@ -205,6 +205,10 @@ body {
   opacity: 1;
 }
 
+.play-item.active {
+  color: #C5B358;
+}
+
 .play-item::before{
   content: "";
   width: 25px;
@@ -222,10 +226,6 @@ body {
 .play-item.active::before {
   content: "";
   background-image: url("../assets/svg/pause.svg");
-}
-
-.play-item.active::before {
-  color: #C5B358;
 }
 
 .player-icon,
@@ -466,6 +466,7 @@ body {
   height: 7%;
   position: fixed;
   display: flex;
+  flex-wrap: wrap;
   border-radius: 5px;
   background-color: rgba(0,0,0,.4);
   left: 80px;
@@ -489,6 +490,7 @@ body {
   gap: 6px;
   margin: 10px;
 }
+
 .language-title {
   width: 160px;
   color: white;
