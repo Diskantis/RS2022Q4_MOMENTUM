@@ -43,6 +43,13 @@ body {
 
 .player {
   margin-right: 10px;
+  transition: 0.5s;
+  opacity: 1;
+}
+
+.player.active {
+  transition: 0.5s;
+  opacity: 0;
 }
 
 .player-controls {
@@ -289,6 +296,13 @@ body {
   width: 180px;
   min-height: 180px;  
   text-align: left;
+  transition: 0.5s;
+  opacity: 1;
+}
+
+.weather.active {
+  transition: 0.5s;
+  opacity: 0;
 }
 
 .weather-error {
@@ -361,13 +375,27 @@ body {
   margin-bottom: 10px;
   font-family: 'Arial-MT', sans-serif;
   font-size: 100px;
-  letter-spacing: -4px;  
+  letter-spacing: -4px;
+  transition: 0.5s;
+  opacity: 1;
+}
+
+.time.active {
+  transition: 0.5s;
+  opacity: 0;
 }
 
 .date {
   min-height: 28px;
   font-size: 24px;
   margin-bottom: 20px;
+  transition: 0.5s;
+  opacity: 1;
+}
+
+.date.active {
+  transition: 0.5s;
+  opacity: 0;
 }
 
 .greeting-container {
@@ -378,6 +406,13 @@ body {
   min-height: 48px;
   width: 100vw;
   font-size: 40px;
+  transition: 0.5s;
+  opacity: 1;
+}
+
+.greeting-container.active {
+  transition: 0.5s;
+  opacity: 0;
 }
 
 .greeting {
@@ -412,6 +447,16 @@ body {
   height: 30vh;
   min-height: 160px;  
   padding: 20px;
+}
+
+.quote-container {
+  transition: 0.5s;
+  opacity: 1;
+}
+
+.quote-container.active {
+  transition: 0.5s;
+  opacity: 0;
 }
 
 .change-quote {
@@ -462,14 +507,14 @@ body {
 }
 
 .win-settings{
-  width: 290px;
-  height: 7%;
+  width: 320px;
+  height: 22%;
   position: fixed;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   border-radius: 5px;
   background-color: rgba(0,0,0,.4);
-  left: 80px;
+  left: 70px;
   bottom: 20px;
   z-index: 2;
   opacity: 0;
@@ -483,18 +528,36 @@ body {
   transform: translateY(0%);
 }
 
-.set-language {
-  width: 280px;
+.set-language,
+.set-hidden {
+  width: 100%;
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-direction: column;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #C1FF06;
+}
+
+.language-title,
+.hidden-title {
+  color: white;
+  text-align: center;
   margin: 10px;
 }
 
-.language-title {
-  width: 160px;
-  color: white;
-  text-align: left;
+.lang-buttons_block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.hidden-buttons_block {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin: 0 10px;
 }
 
 .lang-button {
@@ -509,12 +572,30 @@ body {
   opacity: 0.8;
   z-index: 5;
 }
+.hide-button {
+  width: 95px;
+  height: 30px;
+  cursor: pointer;
+  background-color: #717171;
+  border: 1px solid white;
+  border-radius: 5px;
+  color: white;
+  font-weight: 700;
+  opacity: 0.8;
+  z-index: 5;
+}
 
-.lang-button:hover {
+.lang-button:hover,
+.hide-button:hover {
   opacity: 1;
 }
 
 .lang-button.active {
   opacity: 1;
   transform: scale(1.1);
+}
+
+.hide-button.active {
+  opacity: 0.5;
+  transform: scale(0.9);
 }

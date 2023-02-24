@@ -3,8 +3,16 @@ import playList from './playList.js';
 let language = localStorage.getItem('lang') ? localStorage.getItem('lang') : document.getElementsByTagName("html")[0].getAttribute("lang");
 const body = document.querySelector('body');
 
+const player = document.querySelector('.player');
+const weather = document.querySelector('.weather');
+
 const time = document.querySelector('.time');
 const data = document.querySelector('.date');
+
+const greetingContainer = document.querySelector('.greeting-container');
+const quoteContainer = document.querySelector('.quote-container');
+
+
 const greeting = document.querySelector('.greeting');
 const name = document.querySelector('.name');
 
@@ -390,13 +398,19 @@ document.addEventListener('click', e => {
     }
 })
 
-const appLanguage = ["Application Language:", "Язык приложения:", "Мова прыкладання:"]
+const appLanguage = [["Application Language:", "Язык приложения:", "Мова прыкладання:"],
+    ["Show / Hide blocks:", "Показать / Скрыть блоки:", "Паказаць / Cxаваць блокі:"]];
+const appHiddenEng = ["Audio", "Weather", "Quotes", "Time", "Data", "Greeting"];
+const appHiddenRus = ["Аудио", "Погода", "Цитаты", "Время", "Дата", "Приветствие"];
+const appHiddenBel = ["Аўдыё", "Надвор'е", "Цытаты", "Час", "Дата", "Прывітанне"];
 const appLang = document.querySelector(".language-title");
+const appHidden = document.querySelector(".hidden-title");
 
 function changeLangSet() {
-    appLang.textContent = language === 'en' ? appLanguage[0] : language === 'ru' ?  appLanguage[1] : language === 'be' ? appLanguage[2] : "";
+    appLang.textContent = language === 'en' ? appLanguage[0][0] : language === 'ru' ?  appLanguage[0][1] : language === 'be' ? appLanguage[0][2] : "";
+    appHidden.textContent = language === 'en' ? appLanguage[1][0] : language === 'ru' ?  appLanguage[1][1] : language === 'be' ? appLanguage[1][2] : "";
 }
-changeLangSet()
+changeLangSet();
 
 const langButtons = document.querySelectorAll(".lang-button");
 langButtons.forEach(button => button.textContent.toLowerCase() === language ? button.classList.add('active') : null)
@@ -413,5 +427,39 @@ langButtons.forEach((button) => button.addEventListener('click', () => {
         getWeather()
         getQuotes()
         changeLangSet()
+        changeHiddenLang()
     }
 }));
+
+const hideButtons = document.querySelectorAll(".hide-button");
+
+hideButtons.forEach((button, index) => button.addEventListener('click', () => {
+    button.classList.toggle('active')
+    if (index === 0) {
+        player.classList.toggle('active')
+        player.classList.contains('active') ? localStorage.setItem('audio', 'off') : localStorage.setItem('audio', 'on')
+    } else if (index === 1) {
+        weather.classList.toggle('active')
+        weather.classList.contains('active') ? localStorage.setItem('weather', 'off') : localStorage.setItem('weather', 'on')
+    } else if (index === 2) {
+        quoteContainer.classList.toggle('active')
+        quoteContainer.classList.contains('active') ? localStorage.setItem('quote', 'off') : localStorage.setItem('quote', 'on')
+    } else if (index === 3) {
+        time.classList.toggle('active')
+        time.classList.contains('active') ? localStorage.setItem('time', 'off') : localStorage.setItem('time', 'on')
+    } else if (index === 4) {
+        data.classList.toggle('active')
+        data.classList.contains('active') ? localStorage.setItem('data', 'off') : localStorage.setItem('data', 'on')
+    } else if (index === 5) {
+        greetingContainer.classList.toggle('active')
+        greetingContainer.classList.contains('active') ? localStorage.setItem('greeting', 'off') : localStorage.setItem('greeting', 'on')
+    }
+}));
+
+function changeHiddenLang() {
+    let appHiddenLng = language === 'en' ? appHiddenEng : language === 'ru' ?  appHiddenRus : language === 'be' ? appHiddenBel : "";
+    for (let i in appHiddenLng) {
+        hideButtons[i].textContent = appHiddenLng[i]
+    }
+}
+changeHiddenLang()
