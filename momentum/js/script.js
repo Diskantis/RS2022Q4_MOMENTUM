@@ -6,14 +6,14 @@ const body = document.querySelector('body');
 const player = document.querySelector('.player');
 const weather = document.querySelector('.weather');
 
+const quote = document.querySelector('.quote-container');
 const time = document.querySelector('.time');
+
 const data = document.querySelector('.date');
-
-const greetingContainer = document.querySelector('.greeting-container');
-const quoteContainer = document.querySelector('.quote-container');
+const greeting = document.querySelector('.greeting-container');
 
 
-const greeting = document.querySelector('.greeting');
+const greetingContent = document.querySelector('.greeting');
 const name = document.querySelector('.name');
 
 const slidePrev = document.querySelector('.slide-prev');
@@ -30,7 +30,7 @@ const humidity = document.querySelector('.humidity');
 const city = document.querySelector('.city');
 
 const changeQuote = document.querySelector('.change-quote');
-const quote = document.querySelector('.quote');
+const quoteContent = document.querySelector('.quote');
 const author = document.querySelector('.author');
 
 
@@ -97,16 +97,16 @@ function showGreeting() {
 
     const timeOfDay = getTimeOfDay();
     if (timeOfDay >= 6 && timeOfDay < 12) {
-        greeting.textContent = `${greetingText[0][0]} ${greetingText[1][0]}`;
+        greetingContent.textContent = `${greetingText[0][0]} ${greetingText[1][0]}`;
         timesOfDay = greetingTextEng[1][0]
     } else if (timeOfDay >= 12 && timeOfDay < 18) {
-        greeting.textContent = `${greetingText[0][1]} ${greetingText[1][1]}`;
+        greetingContent.textContent = `${greetingText[0][1]} ${greetingText[1][1]}`;
         timesOfDay = greetingTextEng[1][1]
     } else if (timeOfDay >= 18 && timeOfDay < 23) {
-        greeting.textContent = `${greetingText[0][1]} ${greetingText[1][2]}`;
+        greetingContent.textContent = `${greetingText[0][1]} ${greetingText[1][2]}`;
         timesOfDay = greetingTextEng[1][2]
     } else if (timeOfDay >= 0 && timeOfDay < 6) {
-        greeting.textContent = `${greetingText[0][2]} ${greetingText[1][3]}`;
+        greetingContent.textContent = `${greetingText[0][2]} ${greetingText[1][3]}`;
         timesOfDay = greetingTextEng[1][3]
     }
 }
@@ -233,7 +233,7 @@ async function getQuotes() {
     const data = await res.json();
     let quoteNum = getRandomNum(0, data.length - 1);
     if (data[quoteNum]['lang'] === language) {
-        quote.textContent = data[quoteNum]['text'];
+        quoteContent.textContent = data[quoteNum]['text'];
         author.textContent = data[quoteNum]['author'];
     } else {
         await getQuotes()
@@ -433,17 +433,31 @@ langButtons.forEach((button) => button.addEventListener('click', () => {
 
 const hideButtons = document.querySelectorAll(".hide-button");
 
+const winApp = [player, weather, quote, time, data, greeting];
+
+hideButtons.forEach((button, index) => {
+    if (localStorage.getItem(button.dataset.hide) === 'off'){
+        button.classList.add('active')
+        winApp[index].classList.add('active')
+    } else if (localStorage.getItem(button.dataset.hide) === 'on'){
+        button.classList.remove('active')
+        winApp[index].classList.remove('active')
+    } else {
+        localStorage.setItem(button.dataset.hide, 'on')
+    }
+});
+
 hideButtons.forEach((button, index) => button.addEventListener('click', () => {
     button.classList.toggle('active')
     if (index === 0) {
         player.classList.toggle('active')
-        player.classList.contains('active') ? localStorage.setItem('audio', 'off') : localStorage.setItem('audio', 'on')
+        button.classList.contains('active') ? localStorage.setItem('player', 'off') : localStorage.setItem('player', 'on')
     } else if (index === 1) {
         weather.classList.toggle('active')
         weather.classList.contains('active') ? localStorage.setItem('weather', 'off') : localStorage.setItem('weather', 'on')
     } else if (index === 2) {
-        quoteContainer.classList.toggle('active')
-        quoteContainer.classList.contains('active') ? localStorage.setItem('quote', 'off') : localStorage.setItem('quote', 'on')
+        quote.classList.toggle('active')
+        quote.classList.contains('active') ? localStorage.setItem('quote', 'off') : localStorage.setItem('quote', 'on')
     } else if (index === 3) {
         time.classList.toggle('active')
         time.classList.contains('active') ? localStorage.setItem('time', 'off') : localStorage.setItem('time', 'on')
@@ -451,8 +465,8 @@ hideButtons.forEach((button, index) => button.addEventListener('click', () => {
         data.classList.toggle('active')
         data.classList.contains('active') ? localStorage.setItem('data', 'off') : localStorage.setItem('data', 'on')
     } else if (index === 5) {
-        greetingContainer.classList.toggle('active')
-        greetingContainer.classList.contains('active') ? localStorage.setItem('greeting', 'off') : localStorage.setItem('greeting', 'on')
+        greeting.classList.toggle('active')
+        greeting.classList.contains('active') ? localStorage.setItem('greeting', 'off') : localStorage.setItem('greeting', 'on')
     }
 }));
 
