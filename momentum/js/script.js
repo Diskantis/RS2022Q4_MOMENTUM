@@ -132,7 +132,7 @@ window.addEventListener('load', getLocalStorage)
 // SET BACKGROUND IMAGE
 function setBg(timesOfDay, bgNum) {
     const img = new Image();
-    img.src = `https://raw.githubusercontent.com/Diskantis/momentum-stage1-tasks/assets/images/${timesOfDay}/${bgNum}.webp`
+    img.src = `https://raw.githubusercontent.com/Diskantis/RS2022Q4_MOMENTUM-IMG/assets/images/${timesOfDay}/${bgNum}.webp`
 
     // новый упрощенный вариант
     img.onload = () => {
